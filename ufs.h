@@ -41,6 +41,8 @@ struct ufs_common {
 	unsigned	bSecureRemovalType;
 	unsigned	bInitActiveICCLevel;
 	unsigned	wPeriodicRTCUpdate;
+	unsigned	bWriteBoosterBufferPreserveUserSpaceEn;
+	unsigned	bWriteBoosterBufferType;
 	bool		bConfigDescrLock;
 };
 

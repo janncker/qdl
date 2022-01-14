@@ -66,9 +66,11 @@ struct ufs_common *ufs_parse_common_params(xmlNode *node, bool finalize_provisio
 {
 	struct ufs_common *result;
 	int errors;
+	int warns_bwrite;
 
 	result = calloc(1, sizeof(struct ufs_common));
 	errors = 0;
+	warns_bwrite = 0;
 
 	result->bNumberLU = attr_as_unsigned(node, "bNumberLU", &errors);
 	result->bBootEnable = !!attr_as_unsigned(node, "bBootEnable", &errors);
@@ -78,7 +80,14 @@ struct ufs_common *ufs_parse_common_params(xmlNode *node, bool finalize_provisio
 	result->bSecureRemovalType = attr_as_unsigned(node, "bSecureRemovalType", &errors);
 	result->bInitActiveICCLevel = attr_as_unsigned(node, "bInitActiveICCLevel", &errors);
 	result->wPeriodicRTCUpdate = attr_as_unsigned(node, "wPeriodicRTCUpdate", &errors);
+	result->bWriteBoosterBufferPreserveUserSpaceEn = attr_as_unsigned(node, "bWriteBoosterBufferPreserveUserSpaceEn", &warns_bwrite);
+	result->bWriteBoosterBufferType = attr_as_unsigned(node, "bWriteBoosterBufferType", &errors);
 	result->bConfigDescrLock = !!attr_as_unsigned(node, "bConfigDescrLock", &errors);
+
+	if (warns_bwrite) {
+		fprintf(stderr, "[UFS] [WARN] bWriteBoosterBufferPreserveUserSpaceEn not defined, default set to 1\n");
+		result->bWriteBoosterBufferPreserveUserSpaceEn = 1;
+	}
 
 	if (errors) {
 		fprintf(stderr, "[UFS] errors while parsing common\n");
